@@ -1036,7 +1036,11 @@ export function InterviewRoom({ session }: InterviewRoomProps) {
                               try {
                                 const resp = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000'}/feedback/free-chat`, {
                                   method: "POST",
-                                  headers: { "Content-Type": "application/json" },
+                                  headers: { 
+                                    "Content-Type": "application/json",
+                                    "ngrok-skip-browser-warning": "true",
+                                    "User-Agent": "Mozilla/5.0 (compatible; NextJS-App)"
+                                  },
                                   body: JSON.stringify({ text: freeChatText.trim(), conversation_id: tavusConversation.conversationId, job_description: jobDescription, context: questionHistory.join("\n") })
                                 })
                                 const data = await resp.json()

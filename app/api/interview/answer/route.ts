@@ -65,11 +65,13 @@ export async function POST(request: NextRequest) {
         })
         
         // Call the backend evaluation endpoint with detailed parameters
-        const backendUrl = process.env.BACKEND_URL || "http://localhost:8000"
+        const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000"
         const evaluationResponse = await fetch(`${backendUrl}/answers/evaluate`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "ngrok-skip-browser-warning": "true",
+            "User-Agent": "Mozilla/5.0 (compatible; NextJS-App)"
           },
           body: JSON.stringify({
             transcript: validatedData.answerTranscript,

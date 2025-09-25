@@ -39,7 +39,12 @@ export function MicCheck({ onComplete, sessionId }: MicCheckProps) {
         const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000'
         
         // Test backend connection
-        const response = await fetch(`${backendUrl}/health`)
+        const response = await fetch(`${backendUrl}/health`, {
+          headers: {
+            'ngrok-skip-browser-warning': 'true',
+            'User-Agent': 'Mozilla/5.0 (compatible; NextJS-App)'
+          }
+        })
         if (response.ok) {
           console.log("[MicCheck] Backend available, using real STT")
           setMockMode(false)
@@ -159,6 +164,10 @@ export function MicCheck({ onComplete, sessionId }: MicCheckProps) {
       
       const response = await fetch(`${backendUrl}/api/audio/transcribe`, {
         method: 'POST',
+        headers: {
+          'ngrok-skip-browser-warning': 'true',
+          'User-Agent': 'Mozilla/5.0 (compatible; NextJS-App)'
+        },
         body: formData,
       })
       

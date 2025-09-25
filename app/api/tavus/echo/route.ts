@@ -12,10 +12,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Call backend echo endpoint
-    const response = await fetch(`${process.env.BACKEND_URL || 'http://localhost:8000'}/tavus/conversation/${conversation_id}/echo`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000'}/tavus/conversation/${conversation_id}/echo`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
+        'User-Agent': 'Mozilla/5.0 (compatible; NextJS-App)'
       },
       body: JSON.stringify({ text }),
     })

@@ -9,6 +9,9 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  env: {
+    NEXT_PUBLIC_BACKEND_URL: process.env.BACKEND_URL,
+  },
   webpack: (config, { isServer }) => {
     // Handle Node.js modules that shouldn't be bundled for the browser
     if (!isServer) {

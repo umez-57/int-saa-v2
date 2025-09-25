@@ -17,7 +17,11 @@ export async function POST(request: NextRequest) {
     
     const response = await fetch(`${backendUrl}/resume/extract`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
+        'User-Agent': 'Mozilla/5.0 (compatible; NextJS-App)'
+      },
       body: JSON.stringify({ resume_file })
     })
     

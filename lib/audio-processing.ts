@@ -42,6 +42,10 @@ export async function uploadAudioFile(
   try {
     const response = await fetch(`${backendUrl}/api/audio/upload`, {
       method: 'POST',
+      headers: {
+        'ngrok-skip-browser-warning': 'true',
+        'User-Agent': 'Mozilla/5.0 (compatible; NextJS-App)'
+      },
       body: formData,
     })
 
@@ -75,6 +79,8 @@ export async function processAudio(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
+        'User-Agent': 'Mozilla/5.0 (compatible; NextJS-App)'
       },
       body: JSON.stringify({
         session_id: sessionId,
@@ -113,6 +119,8 @@ export async function transcribeAudio(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
+        'User-Agent': 'Mozilla/5.0 (compatible; NextJS-App)'
       },
       body: JSON.stringify({
         audio_url: audioUrl,

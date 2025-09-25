@@ -59,6 +59,8 @@ export async function submitAnswer(submission: AnswerSubmission): Promise<{
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
+        'User-Agent': 'Mozilla/5.0 (compatible; NextJS-App)'
       },
       body: JSON.stringify(submission),
     })
@@ -94,6 +96,8 @@ export async function evaluateAnswer(
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
+        'User-Agent': 'Mozilla/5.0 (compatible; NextJS-App)'
       },
       body: JSON.stringify({
         transcript,
@@ -129,6 +133,8 @@ export async function generateInterviewSummary(sessionId: string): Promise<Inter
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
+        'User-Agent': 'Mozilla/5.0 (compatible; NextJS-App)'
       },
       body: JSON.stringify({ session_id: sessionId }),
     })
@@ -164,7 +170,12 @@ export async function getSessionAnswers(sessionId: string): Promise<{
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000'
   
   try {
-    const response = await fetch(`${backendUrl}/api/answers/session/${sessionId}/answers`)
+    const response = await fetch(`${backendUrl}/api/answers/session/${sessionId}/answers`, {
+      headers: {
+        'ngrok-skip-browser-warning': 'true',
+        'User-Agent': 'Mozilla/5.0 (compatible; NextJS-App)'
+      }
+    })
 
     if (!response.ok) {
       throw new Error(`Fetch failed: ${response.status}`)

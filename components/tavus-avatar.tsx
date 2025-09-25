@@ -43,7 +43,12 @@ export function TavusAvatar({ sessionId, onConversationReady, onError, renderVid
         console.log("[TavusAvatar] Loading Tavus config...")
         
         // Load config from backend
-        const configResponse = await fetch(`${process.env.BACKEND_URL || 'http://localhost:8000'}/config`)
+        const configResponse = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000'}/config`, {
+          headers: {
+            'ngrok-skip-browser-warning': 'true',
+            'User-Agent': 'Mozilla/5.0 (compatible; NextJS-App)'
+          }
+        })
         if (!configResponse.ok) {
           throw new Error(`Failed to load config: ${configResponse.status}`)
         }
