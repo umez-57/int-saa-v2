@@ -12,7 +12,7 @@ A comprehensive AI-powered interview preparation platform with real-time video p
 
 ### **🤖 AI Integration**
 - **Tavus AI Personas** - Real-time video avatars with natural conversation
-- **Azure OpenAI** - Advanced question generation and intelligent evaluation
+- **Custom AI Engine** - Advanced question generation and intelligent evaluation
 - **Azure Speech-to-Text** - Real-time voice transcription
 - **Daily.co WebRTC** - High-quality video streaming
 
@@ -42,9 +42,9 @@ A comprehensive AI-powered interview preparation platform with real-time video p
 
 ### **Backend**
 - **FastAPI** - Python web framework
-- **Azure OpenAI** - GPT-4 powered AI services
 - **Azure Speech Services** - Real-time voice processing
 - **Supabase** - PostgreSQL database and authentication
+- **Custom AI Integration** - Intelligent question generation and evaluation
 
 ### **Real-time Features**
 - **Daily.co** - WebRTC video streaming
@@ -87,8 +87,8 @@ careerprep-interview/
 - Node.js 18+ 
 - pnpm (recommended) or npm
 - Supabase account
-- Azure OpenAI account
 - Tavus AI account
+- Azure Speech Services account
 
 ### **Installation**
 
@@ -113,22 +113,26 @@ careerprep-interview/
    # Supabase Configuration
    NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
    NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
    
-   # Azure OpenAI Configuration
-   NEXT_PUBLIC_AZURE_OPENAI_ENDPOINT=your_azure_endpoint
-   NEXT_PUBLIC_AZURE_OPENAI_API_KEY=your_azure_api_key
+   # Tavus AI Configuration
+   TAVUS_API_KEY=your_tavus_api_key
+   TAVUS_PERSONA_ID=your_persona_id
+   TAVUS_REPLICA_ID=your_replica_id
+   TAVUS_BASE_URL=https://tavusapi.com
+   TAVUS_PIPELINE_MODE=echo
+   
+   # Application Configuration
+   NEXT_PUBLIC_BASE_URL=http://localhost:3000
+   NEXT_PUBLIC_DEV_MODE=true
+   
+   # Backend Configuration
+   BACKEND_URL=your_backend_url
    
    # Azure Speech Services
    NEXT_PUBLIC_AZURE_SPEECH_KEY=your_speech_key
+   NEXT_PUBLIC_AZURE_SPEECH_ENDPOINT=your_speech_endpoint
    NEXT_PUBLIC_AZURE_SPEECH_REGION=your_speech_region
-   
-   # Tavus AI Configuration
-   NEXT_PUBLIC_TAVUS_API_KEY=your_tavus_api_key
-   NEXT_PUBLIC_TAVUS_PERSONA_ID=your_persona_id
-   NEXT_PUBLIC_TAVUS_REPLICA_ID=your_replica_id
-   
-   # Backend URL (for API calls)
-   NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
    ```
 
 4. **Database Setup**
@@ -150,10 +154,10 @@ careerprep-interview/
 3. Set up Row Level Security (RLS) policies
 4. Configure authentication providers
 
-### **Azure OpenAI Setup**
-1. Create an Azure OpenAI resource
-2. Deploy GPT-4 model
-3. Configure API keys and endpoints
+### **Azure Speech Services Setup**
+1. Create an Azure Speech Services resource
+2. Get your speech key and region
+3. Configure the endpoint URL
 
 ### **Tavus AI Setup** 🎭
 
@@ -178,9 +182,11 @@ Tavus AI provides realistic video personas for interviews. Here's how to set it 
 #### **4. Configure Environment Variables**
 ```env
 # Tavus AI Configuration
-NEXT_PUBLIC_TAVUS_API_KEY=your_tavus_api_key
-NEXT_PUBLIC_TAVUS_PERSONA_ID=your_persona_id
-NEXT_PUBLIC_TAVUS_REPLICA_ID=your_replica_id
+TAVUS_API_KEY=your_tavus_api_key
+TAVUS_PERSONA_ID=your_persona_id
+TAVUS_REPLICA_ID=your_replica_id
+TAVUS_BASE_URL=https://tavusapi.com
+TAVUS_PIPELINE_MODE=echo
 ```
 
 #### **5. Credit Management** 💳
@@ -413,7 +419,7 @@ For support and questions:
 ## 🎉 Acknowledgments
 
 - **Tavus AI** for persona technology
-- **Azure OpenAI** for AI services
+- **Azure Speech Services** for voice processing
 - **Supabase** for backend infrastructure
 - **Daily.co** for WebRTC capabilities
 
