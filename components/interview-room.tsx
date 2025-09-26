@@ -25,7 +25,9 @@ import {
   ArrowRight,
   GripVertical,
   CheckCircle,
-  ArrowLeft
+  ArrowLeft,
+  Sun,
+  Moon
 } from "lucide-react"
 import { motion } from "framer-motion"
 import { HR_SCREENING_JD, BEHAVIORAL_JD } from "@/lib/default-jds"
@@ -71,8 +73,32 @@ export function InterviewRoom({ session }: InterviewRoomProps) {
   const [questionHistory, setQuestionHistory] = useState<string[]>([])
   const [jdExpanded, setJdExpanded] = useState(false)
   const freeChatModeRef = useRef<boolean>(false)
+  const [isDark, setIsDark] = useState(false)
 
   useEffect(() => { freeChatModeRef.current = freeChatMode }, [freeChatMode])
+
+  // Theme detection and management
+  useEffect(() => {
+    // Check for dark mode
+    const darkMode = document.documentElement.classList.contains('dark')
+    setIsDark(darkMode)
+    
+    // Listen for theme changes
+    const observer = new MutationObserver(() => {
+      setIsDark(document.documentElement.classList.contains('dark'))
+    })
+    
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    })
+    
+    return () => observer.disconnect()
+  }, [])
+
+  const toggleTheme = () => {
+    document.documentElement.classList.toggle('dark')
+  }
 
   // Azure Speech recognition hook (PRIMARY method)
   const {
@@ -672,28 +698,44 @@ export function InterviewRoom({ session }: InterviewRoomProps) {
   // Show job description input for TECH persona only when not provided
   if (isWaitingForJobDescription && session.persona === "tech") {
     return (
-      <div className="h-screen bg-gradient-to-br from-background via-muted/20 to-background flex items-center justify-center p-4">
-        <div className="w-full max-w-3xl mx-auto">
+      <div className="h-screen bg-gray-50 dark:bg-slate-950 flex items-center justify-center p-4 relative">
+        {/* Background Gradients */}
+        <div className="fixed inset-0 pointer-events-none">
+          <div 
+            className="absolute top-0 left-0 w-96 h-96 bg-blue-500/30 dark:bg-blue-600/20 rounded-full"
+            style={{ filter: 'blur(60px)' }}
+          />
+          <div 
+            className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/30 dark:bg-indigo-600/20 rounded-full"
+            style={{ filter: 'blur(60px)' }}
+          />
+          <div 
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-400/20 dark:bg-blue-500/15 rounded-full"
+            style={{ filter: 'blur(80px)' }}
+          />
+        </div>
+
+        <div className="w-full max-w-3xl mx-auto relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <Card className="bg-gradient-to-br from-card/50 to-card/30 border-border/50 backdrop-blur-sm">
+            <Card className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-lg border-2 border-gray-300 dark:border-slate-600 shadow-xl">
               <CardHeader className="text-center pb-6">
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <FileText className="h-8 w-8 text-primary" />
+                <div className="w-20 h-20 bg-blue-500/20 dark:bg-blue-600/20 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-sm border border-blue-300 dark:border-blue-600">
+                  <FileText className="h-10 w-10 text-blue-600 dark:text-blue-400" />
                 </div>
-                <CardTitle className="text-2xl font-bold text-foreground flex items-center justify-center gap-2">
+                <CardTitle className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
                   Job Description Required
                 </CardTitle>
-                <p className="text-muted-foreground mt-2">
+                <p className="text-gray-600 dark:text-gray-400 text-lg leading-relaxed">
                   Please provide a job description to generate personalized interview questions
                 </p>
               </CardHeader>
-              <CardContent className="space-y-6">
+              <CardContent className="space-y-8">
                 <div>
-                  <Label htmlFor="job-description" className="text-foreground font-medium">
+                  <Label htmlFor="job-description" className="text-gray-900 dark:text-white font-semibold text-lg mb-3 block">
                     Job Description
                   </Label>
                   <Textarea
@@ -701,25 +743,29 @@ export function InterviewRoom({ session }: InterviewRoomProps) {
                     placeholder="Paste the complete job description including requirements, responsibilities, and qualifications..."
                     value={jobDescription}
                     onChange={(e) => setJobDescription(e.target.value)}
-                    rows={8}
-                    className="mt-2"
+                    rows={10}
+                    className="mt-3 bg-white/50 dark:bg-slate-700/50 border-2 border-gray-300 dark:border-slate-600 focus:border-blue-500 dark:focus:border-blue-400 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 backdrop-blur-sm resize-none text-base leading-relaxed"
                   />
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                    Include specific requirements, technologies, and responsibilities for more targeted questions
+                  </p>
                 </div>
                 
-                <div className="flex gap-3">
+                <div className="flex gap-4">
                   <Button 
                     onClick={handleJobDescriptionSubmit}
                     disabled={!jobDescription.trim()}
-                    className="flex-1"
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                     size="lg"
                   >
-                    <ArrowRight className="h-4 w-4 mr-2" />
+                    <ArrowRight className="h-5 w-5 mr-2" />
                     Start Interview
                   </Button>
                   <Button 
                     variant="outline"
                     onClick={() => router.push("/dashboard")}
                     size="lg"
+                    className="px-6 py-3 text-lg font-medium bg-white/50 dark:bg-slate-700/50 border-2 border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-600/70 hover:border-blue-400 dark:hover:border-blue-500 text-gray-900 dark:text-white transition-all duration-300"
                   >
                     Cancel
                   </Button>
@@ -733,15 +779,31 @@ export function InterviewRoom({ session }: InterviewRoomProps) {
   }
 
   return (
-    <div className="h-screen bg-gradient-to-br from-background via-muted/20 to-background flex">
+    <div className="h-screen bg-gray-50 dark:bg-slate-950 flex relative">
+      {/* Background Gradients */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div 
+          className="absolute top-0 left-0 w-96 h-96 bg-blue-500/20 dark:bg-blue-600/15 rounded-full"
+          style={{ filter: 'blur(60px)' }}
+        />
+        <div 
+          className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/20 dark:bg-indigo-600/15 rounded-full"
+          style={{ filter: 'blur(60px)' }}
+        />
+        <div 
+          className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-96 h-96 bg-blue-400/15 dark:bg-blue-500/10 rounded-full"
+          style={{ filter: 'blur(80px)' }}
+        />
+      </div>
+
       {/* Left Sidebar - Resizable */}
       <div 
-        className="bg-gradient-to-b from-muted/30 to-muted/20 border-r border-border/50 flex-shrink-0 flex flex-col relative backdrop-blur-sm"
+        className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-lg border-r-2 border-gray-300 dark:border-slate-600 flex-shrink-0 flex flex-col relative shadow-lg z-10"
         style={{ width: `${leftPanelWidth}px` }}
       >
         {/* Resize Handle */}
         <div
-          className="absolute top-0 right-0 w-1 h-full bg-border hover:bg-primary/50 cursor-col-resize transition-colors group"
+          className="absolute top-0 right-0 w-1 h-full bg-gray-300 dark:bg-slate-600 hover:bg-blue-500 dark:hover:bg-blue-400 cursor-col-resize transition-colors group"
           onMouseDown={(e) => {
             const startX = e.clientX
             const startWidth = leftPanelWidth
@@ -762,20 +824,20 @@ export function InterviewRoom({ session }: InterviewRoomProps) {
             document.addEventListener('mouseup', handleMouseUp)
           }}
         >
-          <div className="absolute top-1/2 right-0 transform -translate-y-1/2 translate-x-1/2 w-2 h-8 bg-muted rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-            <GripVertical className="w-2 h-8" />
+          <div className="absolute top-1/2 right-0 transform -translate-y-1/2 translate-x-1/2 w-2 h-8 bg-gray-400 dark:bg-slate-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+            <GripVertical className="w-2 h-8 text-gray-600 dark:text-gray-400" />
           </div>
         </div>
 
         {/* AI Interviewer Video - Always Visible */}
-        <div className="p-6 border-b border-border/50">
+        <div className="p-6 border-b-2 border-gray-300 dark:border-slate-600">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
-              <Mic className="h-4 w-4 text-primary" />
+            <div className="w-8 h-8 bg-blue-500/20 dark:bg-blue-600/20 rounded-lg flex items-center justify-center backdrop-blur-sm border border-blue-300 dark:border-blue-600">
+              <Mic className="h-4 w-4 text-blue-600 dark:text-blue-400" />
             </div>
-            <h3 className="font-semibold text-foreground">AI Interviewer</h3>
+            <h3 className="font-semibold text-gray-900 dark:text-white">AI Interviewer</h3>
           </div>
-          <div className="aspect-video bg-gradient-to-br from-muted/50 to-muted/30 rounded-xl border border-border/50 flex items-center justify-center overflow-hidden">
+          <div className="aspect-video bg-white/30 dark:bg-slate-700/30 backdrop-blur-sm rounded-xl border-2 border-gray-300 dark:border-slate-600 flex items-center justify-center overflow-hidden shadow-lg">
             {!tavusConversation ? (
               <TavusAvatar 
                 sessionId={session.id} 
@@ -800,15 +862,15 @@ export function InterviewRoom({ session }: InterviewRoomProps) {
               />
             )}
         </div>
-          <div className="mt-3 p-3 bg-muted/30 rounded-lg border border-border/30">
+          <div className="mt-3 p-3 bg-white/40 dark:bg-slate-700/40 backdrop-blur-sm rounded-lg border border-gray-300 dark:border-slate-600">
             <div className="flex items-center gap-2">
               <div className={`w-2 h-2 rounded-full ${
                 phase === "asking" ? "bg-yellow-500 animate-pulse" :
                 phase === "listening" ? "bg-green-500" :
                 phase === "finalizing" ? "bg-blue-500 animate-pulse" :
-                "bg-muted-foreground"
+                "bg-gray-400 dark:bg-gray-500"
               }`}></div>
-              <span className="text-xs text-muted-foreground font-medium">
+              <span className="text-xs text-gray-600 dark:text-gray-400 font-medium">
                 {phase === "asking" && "AI is asking the question..."}
                 {phase === "listening" && "Ready for your answer"}
                 {phase === "finalizing" && "Processing your answer..."}
@@ -819,8 +881,8 @@ export function InterviewRoom({ session }: InterviewRoomProps) {
           </div>
 
         {/* Timer - Always Visible */}
-        <div className="p-6 border-b border-border/50">
-          <div className="bg-gradient-to-r from-muted/50 to-muted/30 rounded-xl p-4 border border-border/50">
+        <div className="p-6 border-b-2 border-gray-300 dark:border-slate-600">
+          <div className="bg-white/40 dark:bg-slate-700/40 backdrop-blur-sm rounded-xl p-4 border-2 border-gray-300 dark:border-slate-600 shadow-lg">
             <TimerBadge
               timeRemaining={timeRemaining}
               timeElapsed={timeElapsed}
@@ -828,10 +890,10 @@ export function InterviewRoom({ session }: InterviewRoomProps) {
               isActive={isTimerActive}
             />
             <div className="mt-3 flex items-center justify-between">
-              <div className="text-sm text-foreground font-medium">
+              <div className="text-sm text-gray-900 dark:text-white font-medium">
                 Question {questionIdx + 1}
               </div>
-                      <div className="text-xs text-muted-foreground">
+                      <div className="text-xs text-gray-600 dark:text-gray-400">
                         {session.persona.toUpperCase()} • {session.difficulty.toUpperCase()}
                       </div>
                     </div>
@@ -841,10 +903,10 @@ export function InterviewRoom({ session }: InterviewRoomProps) {
         {/* Recording Controls - Always Visible */}
         <div className="p-6 flex-1">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-8 bg-green-500/10 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-green-500/20 dark:bg-green-600/20 rounded-lg flex items-center justify-center backdrop-blur-sm border border-green-300 dark:border-green-600">
               <Mic className="h-4 w-4 text-green-600 dark:text-green-400" />
             </div>
-            <h3 className="font-semibold text-foreground">Your Answer</h3>
+            <h3 className="font-semibold text-gray-900 dark:text-white">Your Answer</h3>
           </div>
           
           <div className="space-y-4">
@@ -916,13 +978,13 @@ export function InterviewRoom({ session }: InterviewRoomProps) {
 
           {/* Recording Status */}
           {isRecording && (
-            <div className="mt-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+            <div className="mt-6 p-4 bg-red-500/10 dark:bg-red-600/10 border-2 border-red-300 dark:border-red-600 rounded-lg backdrop-blur-sm">
               <motion.div
                 animate={{ opacity: [1, 0.5, 1] }}
                 transition={{ duration: 1, repeat: Infinity }}
-                className="flex items-center justify-center gap-2 text-destructive font-medium text-sm"
+                className="flex items-center justify-center gap-2 text-red-600 dark:text-red-400 font-medium text-sm"
               >
-                <div className="w-2 h-2 bg-destructive rounded-full animate-pulse"></div>
+                <div className="w-2 h-2 bg-red-600 dark:bg-red-400 rounded-full animate-pulse"></div>
                 Recording... {formatTime(recordingDuration / 1000)}
               </motion.div>
             </div>
@@ -930,9 +992,9 @@ export function InterviewRoom({ session }: InterviewRoomProps) {
 
           {/* Speech Recognition Status */}
           {azureError && (
-            <div className="mt-4 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
-              <div className="flex items-center gap-2 text-destructive text-sm">
-                <div className="w-2 h-2 bg-destructive rounded-full"></div>
+            <div className="mt-4 p-3 bg-red-500/10 dark:bg-red-600/10 border-2 border-red-300 dark:border-red-600 rounded-lg backdrop-blur-sm">
+              <div className="flex items-center gap-2 text-red-600 dark:text-red-400 text-sm">
+                <div className="w-2 h-2 bg-red-600 dark:bg-red-400 rounded-full"></div>
                 Azure Speech Error: {azureError}
               </div>
             </div>
@@ -941,27 +1003,36 @@ export function InterviewRoom({ session }: InterviewRoomProps) {
       </div>
 
       {/* Main Content Area - Scrollable */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden relative z-10">
         {/* Header */}
-        <div className="border-b border-border/50 bg-gradient-to-r from-muted/30 to-muted/20 backdrop-blur-sm flex-shrink-0">
+        <div className="border-b-2 border-gray-300 dark:border-slate-600 bg-white/50 dark:bg-slate-800/50 backdrop-blur-lg flex-shrink-0 shadow-lg">
           <div className="px-6 py-5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div>
-                  <h1 className="text-2xl font-bold text-foreground">Interview Session</h1>
+                  <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Interview Session</h1>
                   <div className="flex items-center gap-2 mt-1">
-                    <Badge variant="outline" className="bg-blue-500/10 border-blue-500/30 text-blue-700 dark:text-blue-300">
+                    <Badge className="bg-blue-600 text-white border-0">
                       {(session as any).session_type ? String((session as any).session_type).toUpperCase() : session.persona.toUpperCase()}
                     </Badge>
-                    <Badge variant="outline" className="bg-green-500/10 border-green-500/30 text-green-700 dark:text-green-300">
+                    <Badge className="bg-emerald-600 text-white border-0">
                       {session.difficulty.toUpperCase()}
                     </Badge>
-                    <Badge variant="outline" className="bg-purple-500/10 border-purple-500/30 text-purple-700 dark:text-purple-300">
+                    <Badge className="bg-indigo-600 text-white border-0">
                       {session.mode}
                     </Badge>
                   </div>
                 </div>
               </div>
+              {/* Theme Toggle Button */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={toggleTheme}
+                className="text-gray-900 dark:text-white hover:bg-white/20 dark:hover:bg-white/10 backdrop-blur-sm"
+              >
+                {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              </Button>
             </div>
           </div>
         </div>
@@ -970,14 +1041,14 @@ export function InterviewRoom({ session }: InterviewRoomProps) {
         <div className="flex-1 overflow-y-auto">
           <div className="p-6 space-y-6">
             {/* Current Question */}
-            <Card className="bg-gradient-to-br from-card/50 to-card/30 border-border/50">
+            <Card className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-lg border-2 border-gray-300 dark:border-slate-600 shadow-lg">
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-purple-500/10 rounded-lg flex items-center justify-center">
+                    <div className="w-8 h-8 bg-purple-500/20 dark:bg-purple-600/20 rounded-lg flex items-center justify-center backdrop-blur-sm border border-purple-300 dark:border-purple-600">
                       <FileText className="h-4 w-4 text-purple-600 dark:text-purple-400" />
                     </div>
-                    <CardTitle className="text-foreground">Current Question</CardTitle>
+                    <CardTitle className="text-gray-900 dark:text-white">Current Question</CardTitle>
                   </div>
                   <Button
                     variant={freeChatMode ? "destructive" : "outline"}
@@ -1004,10 +1075,10 @@ export function InterviewRoom({ session }: InterviewRoomProps) {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="relative min-h-[140px] p-6 bg-gradient-to-br from-muted/30 to-muted/20 rounded-xl border border-border/30">
+                <div className="relative min-h-[140px] p-6 bg-white/30 dark:bg-slate-700/30 backdrop-blur-sm rounded-xl border-2 border-gray-300 dark:border-slate-600">
                   {freeChatMode && (
                     <div
-                      className="absolute bg-background/95 border rounded-lg shadow-lg p-3 z-20 cursor-move select-none"
+                      className="absolute bg-white/95 dark:bg-slate-800/95 backdrop-blur-lg border-2 border-gray-300 dark:border-slate-600 rounded-lg shadow-xl p-3 z-20 cursor-move select-none"
                       onMouseDown={(e) => {
                         // Allow drag by grabbing anywhere in the box
                         draggingRef.current = { dx: e.clientX - freeChatPos.x, dy: e.clientY - freeChatPos.y }
@@ -1073,7 +1144,7 @@ export function InterviewRoom({ session }: InterviewRoomProps) {
                   {currentQuestion ? (
                     <div>
                       <div 
-                        className="text-lg leading-relaxed prose prose-invert max-w-none text-foreground"
+                        className="text-lg leading-relaxed prose prose-slate dark:prose-invert max-w-none text-gray-900 dark:text-white"
                         dangerouslySetInnerHTML={{ 
                           __html: currentQuestion
                             .replace(/\n/g, '<br>')
@@ -1085,24 +1156,24 @@ export function InterviewRoom({ session }: InterviewRoomProps) {
                         }}
                       />
                       <div className="mt-4 flex items-center justify-between">
-                        <div className="text-xs text-muted-foreground">
+                        <div className="text-xs text-gray-600 dark:text-gray-400">
                           Question {questionIdx + 1} - Phase: {phase}
                         </div>
                         <div className={`px-2 py-1 rounded-full text-xs font-medium ${
                           phase === "asking" ? "bg-yellow-500/20 text-yellow-700 dark:text-yellow-300" :
                           phase === "listening" ? "bg-green-500/20 text-green-700 dark:text-green-300" :
                           phase === "finalizing" ? "bg-blue-500/20 text-blue-700 dark:text-blue-300" :
-                          "bg-muted text-muted-foreground"
+                          "bg-gray-200 dark:bg-slate-700 text-gray-600 dark:text-gray-400"
                         }`}>
                           {phase.toUpperCase()}
                         </div>
                       </div>
                     </div>
                   ) : (
-                    <div className="flex items-center justify-center h-full text-muted-foreground">
+                    <div className="flex items-center justify-center h-full text-gray-600 dark:text-gray-400">
                       <div className="text-center">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-3"></div>
-                        <p className="text-foreground">Loading question...</p>
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 dark:border-blue-400 mx-auto mb-3"></div>
+                        <p className="text-gray-900 dark:text-white">Loading question...</p>
                       </div>
                     </div>
                   )}
@@ -1112,14 +1183,14 @@ export function InterviewRoom({ session }: InterviewRoomProps) {
 
             {/* Job Description (collapsible) */}
             {jobDescription && (
-              <Card className="bg-gradient-to-br from-card/50 to-card/30 border-border/50">
+              <Card className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-lg border-2 border-gray-300 dark:border-slate-600 shadow-lg">
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-indigo-500/10 rounded-lg flex items-center justify-center">
+                      <div className="w-8 h-8 bg-indigo-500/20 dark:bg-indigo-600/20 rounded-lg flex items-center justify-center backdrop-blur-sm border border-indigo-300 dark:border-indigo-600">
                         <FileText className="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
                       </div>
-                      <CardTitle className="text-foreground">Job Description</CardTitle>
+                      <CardTitle className="text-gray-900 dark:text-white">Job Description</CardTitle>
                     </div>
                     <Button variant="outline" size="sm" onClick={() => setJdExpanded(v => !v)}>
                       {jdExpanded ? "Hide" : "Show more"}
@@ -1128,8 +1199,8 @@ export function InterviewRoom({ session }: InterviewRoomProps) {
                 </CardHeader>
                 {jdExpanded && (
                   <CardContent>
-                    <div className="p-4 bg-gradient-to-br from-muted/30 to-muted/20 rounded-xl border border-border/30">
-                      <p className="text-sm leading-relaxed text-foreground">
+                    <div className="p-4 bg-white/30 dark:bg-slate-700/30 backdrop-blur-sm rounded-xl border-2 border-gray-300 dark:border-slate-600">
+                      <p className="text-sm leading-relaxed text-gray-900 dark:text-white">
                         {jobDescription}
                       </p>
                     </div>
@@ -1157,13 +1228,13 @@ export function InterviewRoom({ session }: InterviewRoomProps) {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.2 }}
           >
-            <Card className="w-full max-w-md mx-4 bg-gradient-to-br from-card/90 to-card/70 border-border/50 backdrop-blur-sm">
+            <Card className="w-full max-w-md mx-4 bg-white/95 dark:bg-slate-800/95 backdrop-blur-lg border-2 border-gray-300 dark:border-slate-600 shadow-xl">
               <CardHeader className="text-center pb-4">
-                <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-green-500/20 dark:bg-green-600/20 rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-sm border border-green-300 dark:border-green-600">
                   <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
                 </div>
-                <CardTitle className="text-xl font-bold text-foreground">Answer Submitted!</CardTitle>
-                <p className="text-muted-foreground mt-2">
+                <CardTitle className="text-xl font-bold text-gray-900 dark:text-white">Answer Submitted!</CardTitle>
+                <p className="text-gray-600 dark:text-gray-400 mt-2">
                   Your answer has been submitted successfully. What would you like to do next?
                 </p>
               </CardHeader>

@@ -61,11 +61,6 @@ export function TranscriptPanel({ speechSupported, phase }: TranscriptPanelProps
             <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
             <p>No transcript yet</p>
             <p className="text-sm">Start recording to see live transcription</p>
-            <div className="mt-4 text-xs">
-              <p>Debug Info:</p>
-              <p>Speech Support: {isSpeechSupported ? "✅" : "❌"}</p>
-              <p>Current Phase: {phase || "unknown"}</p>
-            </div>
           </div>
         )}
           </div>

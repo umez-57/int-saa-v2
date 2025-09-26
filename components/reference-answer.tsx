@@ -95,7 +95,7 @@ interface ReferenceAnswerProps {
               e.stopPropagation()
               setIsExpanded(!isExpanded)
             }}
-            className="text-xs bg-blue-500/10 border-blue-400/30 text-blue-200 hover:bg-blue-500/20 hover:border-blue-400/50 hover:text-blue-100 transition-all duration-200 flex items-center gap-1"
+            className="text-xs bg-blue-50 dark:bg-blue-500/10 border-2 border-blue-300 dark:border-blue-400/30 text-blue-700 dark:text-blue-200 hover:bg-blue-100 dark:hover:bg-blue-500/20 hover:border-blue-400 dark:hover:border-blue-400/50 hover:text-blue-800 dark:hover:text-blue-100 transition-all duration-200 flex items-center gap-1"
           >
             {isExpanded ? (
               <>
@@ -112,7 +112,7 @@ interface ReferenceAnswerProps {
         </div>
         
         <div className={`transition-all duration-300 ${isExpanded ? 'max-h-none' : 'max-h-80 overflow-hidden'}`}>
-          <div className="p-4 bg-gradient-to-br from-blue-50/10 to-indigo-50/10 dark:from-blue-900/20 dark:to-indigo-900/20 border border-blue-200/20 dark:border-blue-700/30 rounded-lg">
+          <div className="p-4 bg-blue-50/50 dark:bg-blue-900/20 backdrop-blur-sm border-2 border-blue-300 dark:border-blue-600 rounded-lg shadow-sm">
             <div 
               className={`text-sm leading-relaxed prose prose-invert max-w-none ${isExpanded ? 'max-h-[500px] overflow-y-auto pr-2' : ''}`}
               dangerouslySetInnerHTML={{

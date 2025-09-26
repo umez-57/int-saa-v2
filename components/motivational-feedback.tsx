@@ -68,17 +68,17 @@ interface MotivationalFeedbackProps {
   
     if (isLoading) {
       return (
-        <div className="bg-gradient-to-br from-amber-50/10 to-yellow-50/10 border border-amber-200/20 rounded-lg p-4">
+        <div className="bg-amber-50/50 dark:bg-amber-900/20 backdrop-blur-sm border-2 border-amber-300 dark:border-amber-600 rounded-lg p-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-amber-400"></div>
-            <span className="text-sm text-amber-200">Generating feedback...</span>
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-amber-600 dark:border-amber-400"></div>
+            <span className="text-sm text-amber-700 dark:text-amber-200">Generating feedback...</span>
           </div>
         </div>
       )
     }
   
     return (
-      <div className="bg-gradient-to-br from-amber-50/10 to-yellow-50/10 dark:from-amber-900/20 dark:to-yellow-900/20 border border-amber-200/20 dark:border-amber-700/30 rounded-lg p-4">
+      <div className="bg-amber-50/50 dark:bg-amber-900/20 backdrop-blur-sm border-2 border-amber-300 dark:border-amber-600 rounded-lg p-4 shadow-sm">
         <div className="space-y-3">
           <h4 className="text-sm font-semibold text-amber-700 dark:text-amber-200 flex items-center gap-2">
             <div className="w-2 h-2 bg-amber-500 dark:bg-amber-400 rounded-full"></div>
