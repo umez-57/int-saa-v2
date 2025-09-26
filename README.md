@@ -406,8 +406,7 @@ pnpm dev
 For support and questions:
 - **GitHub Issues**: Create an issue with detailed error description
 - **Documentation**: Check this README and code comments
-- **Community**: Join our Discord server for community support
-- **Email**: Contact support@careerprep.ai for urgent issues
+
 
 ### **Before Asking for Help**
 1. Check this troubleshooting section
