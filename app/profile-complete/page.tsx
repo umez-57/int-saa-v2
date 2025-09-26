@@ -9,15 +9,37 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { CheckCircle, User, Mail, Calendar, Briefcase, Target, Globe, Lightbulb } from "lucide-react"
+import { CheckCircle, User, Mail, Calendar, Briefcase, Target, Globe, Lightbulb, Sun, Moon, ArrowLeft } from "lucide-react"
+import Link from "next/link"
 import type { User } from "@supabase/supabase-js"
 
 export default function ProfileCompletePage() {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [isDark, setIsDark] = useState(false)
   const router = useRouter()
   const supabase = createClient()
+
+  useEffect(() => {
+    const theme = localStorage.getItem('theme')
+    setIsDark(theme === 'dark')
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark')
+    }
+  }, [])
+
+  const toggleTheme = () => {
+    const newTheme = !isDark
+    setIsDark(newTheme)
+    if (newTheme) {
+      document.documentElement.classList.add('dark')
+      localStorage.setItem('theme', 'dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+      localStorage.setItem('theme', 'light')
+    }
+  }
 
   // Form state
   const [formData, setFormData] = useState({
@@ -127,40 +149,95 @@ export default function ProfileCompletePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p>Loading...</p>
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-950 flex items-center justify-center relative">
+        {/* Background Gradients */}
+        <div className="fixed inset-0 pointer-events-none">
+          <div 
+            className="absolute top-0 left-0 w-96 h-96 bg-blue-500/20 dark:bg-blue-600/15 rounded-full"
+            style={{ filter: 'blur(60px)' }}
+          />
+          <div 
+            className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/20 dark:bg-indigo-600/15 rounded-full"
+            style={{ filter: 'blur(60px)' }}
+          />
+          <div 
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-400/15 dark:bg-blue-500/10 rounded-full"
+            style={{ filter: 'blur(80px)' }}
+          />
+        </div>
+        <div className="text-center relative z-10">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 dark:border-blue-400 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto max-w-2xl px-6 py-12">
-        <Card>
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-950 relative">
+      {/* Background Gradients */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div 
+          className="absolute top-0 left-0 w-96 h-96 bg-blue-500/20 dark:bg-blue-600/15 rounded-full"
+          style={{ filter: 'blur(60px)' }}
+        />
+        <div 
+          className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/20 dark:bg-indigo-600/15 rounded-full"
+          style={{ filter: 'blur(60px)' }}
+        />
+        <div 
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-400/15 dark:bg-blue-500/10 rounded-full"
+          style={{ filter: 'blur(80px)' }}
+        />
+      </div>
+
+      {/* Header */}
+      <div className="relative z-10 border-b-2 border-gray-300 dark:border-slate-600 bg-white/50 dark:bg-slate-800/50 backdrop-blur-lg shadow-lg">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex justify-between items-center h-16">
+            {/* Logo */}
+            <Link href="/dashboard" className="flex items-center">
+              <span className="text-xl font-bold">
+                <span className="text-blue-600 dark:text-blue-400">Career</span>
+                <span className="text-gray-900 dark:text-white">Prep</span>
+                <span className="text-blue-600 dark:text-blue-400"> AI</span>
+              </span>
+            </Link>
+
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="p-2.5 rounded-lg bg-white/10 dark:bg-white/5 border border-white/20 dark:border-white/10 hover:bg-white/25 dark:hover:bg-white/15 hover:border-white/30 dark:hover:border-white/20 transition-all duration-300 backdrop-blur-sm"
+            >
+              {isDark ? <Sun className="w-5 h-5 text-gray-700 dark:text-gray-200" /> : <Moon className="w-5 h-5 text-gray-700 dark:text-gray-200" />}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="container mx-auto max-w-2xl px-6 py-12 relative z-10">
+        <Card className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-lg border-2 border-gray-300 dark:border-slate-600 shadow-xl">
           <CardHeader className="text-center">
-            <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-              <User className="w-8 h-8 text-primary" />
+            <div className="mx-auto w-16 h-16 bg-blue-500/20 dark:bg-blue-600/20 rounded-full flex items-center justify-center mb-4 backdrop-blur-sm border border-blue-300 dark:border-blue-600">
+              <User className="w-8 h-8 text-blue-600 dark:text-blue-400" />
             </div>
-            <CardTitle className="text-2xl">Complete Your Profile</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-2xl text-gray-900 dark:text-white">Complete Your Profile</CardTitle>
+            <CardDescription className="text-gray-600 dark:text-gray-400">
               Help us personalize your interview experience. Only first name and last name are required.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Required Fields */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-primary" />
+              <h3 className="text-lg font-semibold flex items-center gap-2 text-gray-900 dark:text-white">
+                <CheckCircle className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 Required Information
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName" className="flex items-center gap-2">
-                    <User className="w-4 h-4" />
+                  <Label htmlFor="firstName" className="flex items-center gap-2 text-gray-900 dark:text-white">
+                    <User className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                     First Name *
                   </Label>
                   <Input
@@ -169,12 +246,13 @@ export default function ProfileCompletePage() {
                     onChange={(e) => handleInputChange("firstName", e.target.value)}
                     placeholder="Enter your first name"
                     required
+                    className="bg-white/50 dark:bg-slate-700/50 border-2 border-gray-300 dark:border-slate-600 focus:border-blue-500 dark:focus:border-blue-400 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 backdrop-blur-sm"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="lastName" className="flex items-center gap-2">
-                    <User className="w-4 h-4" />
+                  <Label htmlFor="lastName" className="flex items-center gap-2 text-gray-900 dark:text-white">
+                    <User className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                     Last Name *
                   </Label>
                   <Input
@@ -183,6 +261,7 @@ export default function ProfileCompletePage() {
                     onChange={(e) => handleInputChange("lastName", e.target.value)}
                     placeholder="Enter your last name"
                     required
+                    className="bg-white/50 dark:bg-slate-700/50 border-2 border-gray-300 dark:border-slate-600 focus:border-blue-500 dark:focus:border-blue-400 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 backdrop-blur-sm"
                   />
                 </div>
               </div>
@@ -190,15 +269,15 @@ export default function ProfileCompletePage() {
 
             {/* Optional Fields */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold flex items-center gap-2">
-                <Lightbulb className="w-5 h-5 text-muted-foreground" />
+              <h3 className="text-lg font-semibold flex items-center gap-2 text-gray-900 dark:text-white">
+                <Lightbulb className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 Optional Information
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="age" className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4" />
+                  <Label htmlFor="age" className="flex items-center gap-2 text-gray-900 dark:text-white">
+                    <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                     Age
                   </Label>
                   <Input
@@ -209,16 +288,17 @@ export default function ProfileCompletePage() {
                     placeholder="Enter your age"
                     min="16"
                     max="100"
+                    className="bg-white/50 dark:bg-slate-700/50 border-2 border-gray-300 dark:border-slate-600 focus:border-blue-500 dark:focus:border-blue-400 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 backdrop-blur-sm"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="experienceLevel" className="flex items-center gap-2">
-                    <Briefcase className="w-4 h-4" />
+                  <Label htmlFor="experienceLevel" className="flex items-center gap-2 text-gray-900 dark:text-white">
+                    <Briefcase className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                     Experience Level
                   </Label>
                   <Select value={formData.experienceLevel} onValueChange={(value) => handleInputChange("experienceLevel", value)}>
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-white/50 dark:bg-slate-700/50 border-2 border-gray-300 dark:border-slate-600 focus:border-blue-500 dark:focus:border-blue-400 text-gray-900 dark:text-white backdrop-blur-sm">
                       <SelectValue placeholder="Select experience level" />
                     </SelectTrigger>
                     <SelectContent>
@@ -233,12 +313,12 @@ export default function ProfileCompletePage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="role" className="flex items-center gap-2">
-                  <Briefcase className="w-4 h-4" />
+                <Label htmlFor="role" className="flex items-center gap-2 text-gray-900 dark:text-white">
+                  <Briefcase className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                   Current Role
                 </Label>
                 <Select value={formData.role} onValueChange={(value) => handleInputChange("role", value)}>
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-white/50 dark:bg-slate-700/50 border-2 border-gray-300 dark:border-slate-600 focus:border-blue-500 dark:focus:border-blue-400 text-gray-900 dark:text-white backdrop-blur-sm">
                     <SelectValue placeholder="Select your role" />
                   </SelectTrigger>
                   <SelectContent>
@@ -287,12 +367,12 @@ export default function ProfileCompletePage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="targetTrack" className="flex items-center gap-2">
-                  <Target className="w-4 h-4" />
+                <Label htmlFor="targetTrack" className="flex items-center gap-2 text-gray-900 dark:text-white">
+                  <Target className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                   Target Track
                 </Label>
                 <Select value={formData.targetTrack} onValueChange={(value) => handleInputChange("targetTrack", value)}>
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-white/50 dark:bg-slate-700/50 border-2 border-gray-300 dark:border-slate-600 focus:border-blue-500 dark:focus:border-blue-400 text-gray-900 dark:text-white backdrop-blur-sm">
                     <SelectValue placeholder="Select target track" />
                   </SelectTrigger>
                   <SelectContent>
@@ -313,12 +393,12 @@ export default function ProfileCompletePage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="personaPref" className="flex items-center gap-2">
-                  <User className="w-4 h-4" />
+                <Label htmlFor="personaPref" className="flex items-center gap-2 text-gray-900 dark:text-white">
+                  <User className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                   Preferred Interview Type
                 </Label>
                 <Select value={formData.personaPref} onValueChange={(value) => handleInputChange("personaPref", value)}>
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-white/50 dark:bg-slate-700/50 border-2 border-gray-300 dark:border-slate-600 focus:border-blue-500 dark:focus:border-blue-400 text-gray-900 dark:text-white backdrop-blur-sm">
                     <SelectValue placeholder="Select preferred interview type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -331,8 +411,8 @@ export default function ProfileCompletePage() {
 
 
               <div className="space-y-2">
-                <Label htmlFor="goals" className="flex items-center gap-2">
-                  <Target className="w-4 h-4" />
+                <Label htmlFor="goals" className="flex items-center gap-2 text-gray-900 dark:text-white">
+                  <Target className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                   Career Goals
                 </Label>
                 <Textarea
@@ -341,6 +421,7 @@ export default function ProfileCompletePage() {
                   onChange={(e) => handleInputChange("goals", e.target.value)}
                   placeholder="Tell us about your career goals and what you want to achieve..."
                   rows={3}
+                  className="bg-white/50 dark:bg-slate-700/50 border-2 border-gray-300 dark:border-slate-600 focus:border-blue-500 dark:focus:border-blue-400 text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 backdrop-blur-sm resize-none"
                 />
               </div>
             </div>
@@ -350,7 +431,7 @@ export default function ProfileCompletePage() {
               <Button
                 onClick={handleSaveProfile}
                 disabled={saving || !formData.firstName.trim() || !formData.lastName.trim()}
-                className="flex-1"
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {saving ? "Saving..." : "Save Profile"}
               </Button>
@@ -358,13 +439,13 @@ export default function ProfileCompletePage() {
                 onClick={handleSkip}
                 variant="outline"
                 disabled={saving}
-                className="flex-1"
+                className="flex-1 px-6 py-3 text-lg font-semibold bg-white/50 dark:bg-slate-700/50 border-2 border-gray-300 dark:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-600/70 hover:border-blue-400 dark:hover:border-blue-500 text-gray-900 dark:text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Skip for Now
               </Button>
             </div>
 
-            <p className="text-sm text-muted-foreground text-center">
+            <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
               You can always update your profile later from the dashboard.
             </p>
           </CardContent>
