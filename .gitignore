@@ -218,9 +218,9 @@ docs/
 *.backup
 *.old
 
-# Lock files (keep package-lock.json but ignore others)
+# Lock files (keep package-lock.json and pnpm-lock.yaml for Vercel)
 yarn.lock
-pnpm-lock.yaml
+# pnpm-lock.yaml - needed for Vercel deployments
 
 # IDE files
 *.sublime-project
